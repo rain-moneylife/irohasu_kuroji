@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>いろはす黒字チェックシート</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --green-dark:#1a6b3a;
+  --green-mid:#2d9e5f;
+  --green-light:#5cbd85;
+  --green-pale:#e8f7ee;
+  --green-ultra:#f0fbf4;
+  --accent-red:#e03a3a;
+  --accent-yellow:#f5a623;
+  --accent-blue:#2d7dd2;
+  --text-dark:#1a2e1f;
+  --text-mid:#3a5a42;
+  --text-light:#7a9a80;
+  --border:#b8dfc5;
+  --white:#ffffff;
+  --shadow:0 2px 12px rgba(26,107,58,0.1);
+  --shadow-hover:0 6px 24px rgba(26,107,58,0.18);
+}
+
+body{
+  font-family:'Noto Sans JP',sans-serif;
+  background:linear-gradient(135deg,#e8f7ee 0%,#f0fbf4 50%,#e0f5e8 100%);
+  min-height:100vh;
+  padding:16px;
+  color:var(--text-dark);
+}
+
+.page-header{
+  background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-mid) 100%);
+  border-radius:20px;
+  padding:24px 20px;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 8px 32px rgba(26,107,58,0.3);
+}
+.page-header::before{
+  content:'💧';
+  position:absolute;
+  top:-10px;right:10px;
+  font-size:80px;
+  opacity:0.15;
+}
+.page-header::after{
+  content:'🌿';
+  position:absolute;
+  bottom:-10px;left:10px;
+  font-size:60px;
+  opacity:0.15;
+}
+.header-badge{
+  display:inline-block;
+  background:var(--accent-yellow);
+  color:var(--green-dark);
+  font-size:11px;
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:20px;
+  margin-bottom:8px;
+}
+.page-header h1{
+  color:var(--white);
+  font-size:20px;
+  font-weight:900;
+  line-height:1.3;
+  margin-bottom:6px;
+}
+.page-header p{
+  color:rgba(255,255,255,0.85);
+  font-size:12px;
+  line-height:1.5;
+}
+.total-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:12px;
+  padding:8px 14px;
+  margin-top:12px;
+  color:var(--white);
+  font-size:13px;
+  font-weight:700;
+}
+.total-badge span{
+  color:var(--accent-yellow);
+  font-size:18px;
+}
+
+/* Progress */
+.progress-wrap{
+  background:var(--white);
+  border-radius:16px;
+  padding:16px 20px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+}
+.progress-label{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+  font-size:12px;
+  color:var(--text-mid);
+  font-weight:700;
+}
+.progress-label strong{color:var(--green-dark);font-size:14px;}
+.progress-bar-bg{
+  background:var(--green-pale);
+  border-radius:8px;
+  height:10px;
+  overflow:hidden;
+}
+.progress-bar-fill{
+  background:linear-gradient(90deg,var(--green-light),var(--green-mid));
+  height:100%;
+  border-radius:8px;
+  transition:width 0.5s ease;
+  width:0%;
+}
+
+/* Section */
+.section{
+  background:var(--white);
+  border-radius:20px;
+  margin-bottom:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  transition:box-shadow 0.2s;
+}
+.section:hover{box-shadow:var(--shadow-hover);}
+
+.section-header{
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  user-select:none;
+}
+.section-header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.section-icon{
+  width:36px;height:36px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+.section-title{
+  font-size:13px;
+  font-weight:700;
+  color:var(--green-dark);
+  line-height:1.3;
+}
+.section-amount{
+  font-size:11px;
+  color:var(--accent-yellow);
+  font-weight:700;
+  background:var(--green-dark);
+  padding:2px 8px;
+  border-radius:10px;
+  margin-top:2px;
+  display:inline-block;
+}
+.section-chevron{
+  font-size:12px;
+  color:var(--text-light);
+  transition:transform 0.3s;
+  flex-shrink:0;
+}
+.section.collapsed .section-chevron{transform:rotate(-90deg);}
+.section-body{padding:0 14px 14px;}
+.section.collapsed .section-body{display:none;}
+
+/* Check item */
+.check-item{
+  background:var(--green-ultra);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:12px 14px;
+  margin-bottom:8px;
+  transition:all 0.2s;
+  cursor:pointer;
+}
+.check-item:hover{border-color:var(--green-light);background:var(--green-pale);}
+.check-item.done{background:#f0fff4;border-color:#a8ddb8;opacity:0.85;}
+
+.item-top{display:flex;align-items:flex-start;gap:10px;}
+.checkbox{
+  width:22px;height:22px;
+  border-radius:6px;
+  border:2px solid var(--green-light);
+  background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  transition:all 0.2s;
+  margin-top:1px;
+}
+.check-item.done .checkbox{background:#27ae60;border-color:#27ae60;}
+.checkbox::after{
+  content:'✓';
+  color:var(--white);
+  font-size:13px;
+  font-weight:900;
+  display:none;
+}
+.check-item.done .checkbox::after{display:block;}
+
+.item-content{flex:1;min-width:0;}
+.item-label{
+  font-size:13px;
+  font-weight:700;
+  color:var(--text-dark);
+  line-height:1.4;
+  margin-bottom:2px;
+}
+.check-item.done .item-label{text-decoration:line-through;color:var(--text-light);}
+.item-detail{font-size:11px;color:var(--text-mid);line-height:1.4;}
+
+.item-right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+  flex-shrink:0;
+}
+.entry-badge{
+  background:var(--accent-red);
+  color:var(--white);
+  font-size:9px;
+  font-weight:700;
+  padding:2px 7px;
+  border-radius:8px;
+  white-space:nowrap;
+}
+.amount-badge{
+  background:var(--green-pale);
+  color:var(--green-dark);
+  font-size:11px;
+  font-weight:700;
+  padding:2px 8px;
+  border-radius:8px;
+  white-space:nowrap;
+  border:1px solid var(--border);
+}
+.check-item.done .amount-badge{
+  background:#e0f5e9;
+  border-color:#a8ddb8;
+  color:#27ae60;
+}
+
+/* URL button */
+.url-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:var(--green-mid);
+  color:var(--white) !important;
+  font-size:10px;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:8px;
+  text-decoration:none;
+  margin-top:6px;
+  transition:background 0.2s;
+  white-space:nowrap;
+}
+.url-btn:hover{background:var(--green-dark);}
+.url-btn::before{content:'🔗 ';}
+
+/* Memo */
+.section-memo{
+  background:var(--green-ultra);
+  border:1.5px dashed var(--border);
+  border-radius:12px;
+  padding:12px;
+  margin-top:4px;
+}
+.section-memo-label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--green-mid);
+  margin-bottom:6px;
+}
+.memo-textarea{
+  width:100%;
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:12px;
+  font-family:'Noto Sans JP',sans-serif;
+  color:var(--text-dark);
+  resize:vertical;
+  min-height:56px;
+  line-height:1.6;
+  transition:border-color 0.2s;
+}
+.memo-textarea:focus{
+  outline:none;
+  border-color:var(--green-light);
+  box-shadow:0 0 0 3px rgba(91,189,133,0.15);
+}
+.memo-textarea::placeholder{color:var(--text-light);}
+
+/* Summary */
+.summary-card{
+  background:linear-gradient(135deg,var(--green-dark),var(--green-mid));
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 8px 32px rgba(26,107,58,0.25);
+}
+.summary-title{color:var(--white);font-size:14px;font-weight:700;margin-bottom:14px;}
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 12px;
+  background:rgba(255,255,255,0.1);
+  border-radius:10px;
+  margin-bottom:6px;
+}
+.summary-row-label{color:rgba(255,255,255,0.85);font-size:12px;}
+.summary-row-val{color:var(--accent-yellow);font-size:13px;font-weight:700;}
+.summary-divider{height:1px;background:rgba(255,255,255,0.2);margin:10px 0;}
+.summary-total{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  background:rgba(255,255,255,0.15);
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.3);
+}
+.summary-total-label{color:var(--white);font-size:13px;font-weight:700;}
+.summary-total-val{color:var(--accent-yellow);font-size:20px;font-weight:900;}
+
+/* Warning */
+.warning-box{
+  background:#fff5f5;
+  border:1.5px solid #ffcdd2;
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:16px;
+}
+.warning-title{
+  color:var(--accent-red);
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+.warning-item{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:7px;
+  font-size:12px;
+  color:var(--text-dark);
+  line-height:1.5;
+}
+.warning-item::before{content:'⚠️';flex-shrink:0;font-size:11px;}
+
+/* Tips box */
+.tips-box{
+  background:var(--green-pale);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:16px;
+}
+.tips-title{
+  color:var(--green-dark);
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+.tips-item{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:7px;
+  font-size:12px;
+  color:var(--text-dark);
+  line-height:1.5;
+}
+.tips-item::before{content:'💡';flex-shrink:0;font-size:11px;}
+
+/* Reset */
+.reset-btn{
+  display:block;
+  width:100%;
+  padding:12px;
+  background:var(--white);
+  border:2px solid var(--border);
+  border-radius:14px;
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  color:var(--text-mid);
+  cursor:pointer;
+  transition:all 0.2s;
+  text-align:center;
+  margin-top:8px;
+}
+.reset-btn:hover{border-color:var(--accent-red);color:var(--accent-red);}
+
+.save-notice{
+  text-align:center;
+  font-size:11px;
+  color:var(--text-light);
+  padding:8px;
+}
+
+/* DM box */
+.dm-box{
+  background:var(--green-pale);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:16px;
+}
+.dm-title{color:var(--green-dark);font-size:13px;font-weight:700;margin-bottom:6px;}
+.dm-text{font-size:12px;color:var(--text-dark);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-badge">クーポン×マイレージ合わせ技</div>
+  <h1>いろはす黒字<br>チェックシート💧</h1>
+  <p>手順通りにやれば確実に黒字！<br>チェックとメモはブラウザに自動保存されます</p>
+  <div class="total-badge">540mlの場合 <span>185円黒字！</span></div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>完了したステップ</span>
+    <strong id="progress-text">0 / 0</strong>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progress-bar"></div>
+  </div>
+</div>
+
+<!-- STEP 1: オーディブル -->
+<div class="section" id="sec-audible">
+  <div class="section-header" onclick="toggleSection('sec-audible')">
+    <div class="section-header-left">
+      <div class="section-icon" style="background:#fff3e0;">🎧</div>
+      <div>
+        <div class="section-title">STEP1. Amazonオーディブル無料体験</div>
+        <div class="section-amount">500円OFFクーポンゲット</div>
+      </div>
+    </div>
+    <span class="section-chevron">▼</span>
+  </div>
+  <div class="section-body">
+    <div class="check-item" onclick="toggleCheck(this)" data-key="aud1">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">キャンペーンページを確認　#PR</div>
+          <div class="item-detail">該当ページが表示された人のみ対象！表示されない場合は対象外</div>
+          <a class="url-btn" href="https://amzn.to/3L35dqR" target="_blank" onclick="event.stopPropagation()">キャンペーンページを開く #PR</a>
+        </div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-key="aud2">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">Amazonアカウントでオーディブル無料体験に登録</div>
+          <div class="item-detail">Amazonの支払いカードが自動適用される場合あり</div>
+        </div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-key="aud3">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">500円OFFクーポンをゲット</div>
+          <div class="item-detail">日用品・食品に使えるクーポン　購入金額の縛りなし！</div>
+        </div>
+        <div class="item-right">
+          <span class="amount-badge">500円OFF</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-memo">
+      <div class="section-memo-label">📝 メモ</div>
+      <textarea class="memo-textarea" data-key="memo-audible" placeholder="登録日・解約期限など…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: いろはす購入 -->
+<div class="section" id="sec-buy">
+  <div class="section-header" onclick="toggleSection('sec-buy')">
+    <div class="section-header-left">
+      <div class="section-icon" style="background:#e8f7ee;">💧</div>
+      <div>
+        <div class="section-title">STEP2. いろはすを購入</div>
+        <div class="section-amount">クーポン適用で激安に！</div>
+      </div>
+    </div>
+    <span class="section-chevron">▼</span>
+  </div>
+  <div class="section-body">
+
+    <!-- 540ml pattern -->
+    <div style="background:var(--green-pale);border-radius:12px;padding:10px 12px;margin-bottom:10px;">
+      <div style="font-size:11px;font-weight:700;color:var(--green-dark);margin-bottom:6px;">🅐 540ml × 5本パターン（185円黒字）</div>
+      <div class="check-item" onclick="toggleCheck(this)" data-key="buy1a">
+        <div class="item-top">
+          <div class="checkbox"></div>
+          <div class="item-content">
+            <div class="item-label">いろはす540ml×5本をカートに入れる　#PR</div>
+            <div class="item-detail">種類は何でもOK◎（天然水・もも・みかんなど）</div>
+            <a class="url-btn" href="https://amzn.to/4fZFE7A" target="_blank" onclick="event.stopPropagation()">商品リンクを開く #PR</a>
+          </div>
+          <div class="item-right">
+            <span class="amount-badge">通常530円</span>
+          </div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" data-key="buy2a">
+        <div class="item-top">
+          <div class="checkbox"></div>
+          <div class="item-content">
+            <div class="item-label">500円OFFクーポンを適用して購入</div>
+            <div class="item-detail">530円 - 500円OFF = 30円で購入！</div>
+          </div>
+          <div class="item-right">
+            <span class="amount-badge">30円で購入</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 340ml pattern -->
+    <div style="background:#fff8e1;border:1.5px solid #ffe082;border-radius:12px;padding:10px 12px;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;color:#b8860b;margin-bottom:6px;">🅑 340ml × 6本パターン（ポイント重視・240pt還元）</div>
+      <div class="check-item" onclick="toggleCheck(this)" data-key="buy1b">
+        <div class="item-top">
+          <div class="checkbox"></div>
+          <div class="item-content">
+            <div class="item-label">いろはす340ml×6本をカートに入れる</div>
+            <div class="item-detail">種類は何でもOK◎　6本購入で240ptになる</div>
+            <a class="url-btn" href="https://amzn.to/3QiSu6B" target="_blank" onclick="event.stopPropagation()">ポイントほしい人はこっち340mlで240ptゲット #PR</a>
+          </div>
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)" data-key="buy2b">
+        <div class="item-top">
+          <div class="checkbox"></div>
+          <div class="item-content">
+            <div class="item-label">500円OFFクーポンを適用して購入</div>
+            <div class="item-detail">クーポン適用後の金額を確認してから購入</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-memo">
+      <div class="section-memo-label">📝 メモ</div>
+      <textarea class="memo-textarea" data-key="memo-buy" placeholder="購入日・購入金額など…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: マイレージ申請 -->
+<div class="section" id="sec-mileage">
+  <div class="section-header" onclick="toggleSection('sec-mileage')">
+    <div class="section-header-left">
+      <div class="section-icon" style="background:#e8f7ee;">🧾</div>
+      <div>
+        <div class="section-title">STEP3. いろはすマイレージに申請</div>
+        <div class="section-amount">215pt〜240pt還元</div>
+      </div>
+    </div>
+    <span class="section-chevron">▼</span>
+  </div>
+  <div class="section-body">
+    <div class="check-item" onclick="toggleCheck(this)" data-key="mile1">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">いろはすマイレージアプリを開く</div>
+          <div class="item-detail">アプリがない場合はダウンロードしてね</div>
+          <a class="url-btn" href="https://i-lohas-cp.jp/lp.go" target="_blank" onclick="event.stopPropagation()">マイレージページを開く</a>
+        </div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-key="mile2">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">購入したいろはすのレシートを申請</div>
+          <div class="item-detail">受け取り後にAmazonで領収書取得可能　申請は6/28まで</div>
+        </div>
+        <div class="item-right">
+          <span class="amount-badge">540ml×5本：215pt</span>
+        </div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-key="mile3">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">ポイント付与を確認</div>
+          <div class="item-detail">Vポイント選択でウエル活資金に◎　340ml×6本の場合は240pt還元</div>
+        </div>
+        <div class="item-right">
+          <span class="amount-badge">340ml×6本：240pt</span>
+        </div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)" data-key="aud4">
+      <div class="item-top">
+        <div class="checkbox"></div>
+        <div class="item-content">
+          <div class="item-label">【最後に】オーディブル解約手続き</div>
+          <div class="item-detail">解約後も30日間は無料で利用可能◎　忘れると翌月から課金されるので注意！</div>
+          <a class="url-btn" href="https://help.audible.co.jp/s/article/cancel-membership?language=ja" target="_blank" onclick="event.stopPropagation()">解約ページを開く</a>
+        </div>
+      </div>
+    </div>
+    <div class="section-memo">
+      <div class="section-memo-label">📝 メモ</div>
+      <textarea class="memo-textarea" data-key="memo-mileage" placeholder="申請日・ポイント確認日・解約期限など…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-card">
+  <div class="summary-title">💰 黒字シミュレーション</div>
+
+  <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:8px;">🅐 540ml × 5本パターン</div>
+  <div class="summary-row">
+    <span class="summary-row-label">支払い（530円-500円OFF）</span>
+    <span class="summary-row-val">30円</span>
+  </div>
+  <div class="summary-row">
+    <span class="summary-row-label">マイレージ還元</span>
+    <span class="summary-row-val">215pt</span>
+  </div>
+  <div class="summary-divider"></div>
+  <div class="summary-total">
+    <span class="summary-total-label">黒字額</span>
+    <span class="summary-total-val">185円黒字！</span>
+  </div>
+
+  <div style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:8px;">🅑 340ml × 6本パターン（ポイント重視）</div>
+  <div class="summary-row">
+    <span class="summary-row-label">マイレージ還元</span>
+    <span class="summary-row-val">240pt</span>
+  </div>
+</div>
+
+<!-- TIPS -->
+<div class="tips-box">
+  <div class="tips-title">💡 お得に使うコツ</div>
+  <div class="tips-item">いろはすは種類問わず何でもOK！天然水・もも・みかん・スパークリングなど好きなものを選んでね</div>
+  <div class="tips-item">ポイントをたくさん稼ぎたいなら340ml×6本がオススメ</div>
+  <div class="tips-item">オーディブルはクーポン使い終わったらすぐ解約してOK！解約後30日間は引き続き使えるよ</div>
+</div>
+
+<!-- WARNING -->
+<div class="warning-box">
+  <div class="warning-title">⚠️ 注意点</div>
+  <div class="warning-item">オーディブルのクーポンはリンクから飛んで該当ページが表示された人のみ対象</div>
+  <div class="warning-item">Amazonの支払いカードが自動適用される場合があるので事前に確認を</div>
+  <div class="warning-item">オーディブル無料体験の解約を忘れると翌月から課金されるので注意！</div>
+</div>
+
+<!-- DM -->
+<div class="dm-box">
+  <div class="dm-title">💬 わからないことはDMへ</div>
+  <div class="dm-text">手順でわからないことがあればInstagramのDMで気軽に質問してください😊<br>rain.moneylife</div>
+</div>
+
+<button class="reset-btn" onclick="resetAll()">🔄 チェックをリセットする</button>
+<p class="save-notice">✅ チェック・メモはブラウザに自動保存されます<br>by rain.moneylife</p>
+
+<script>
+const STORAGE_KEY='irohas_checklist_v1';
+function getState(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch{return{};}}
+function saveState(s){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(s));}catch{}}
+
+function toggleSection(id){
+  const sec=document.getElementById(id);
+  sec.classList.toggle('collapsed');
+  const s=getState();
+  s['section_'+id]=sec.classList.contains('collapsed');
+  saveState(s);
+}
+
+function toggleCheck(el){
+  el.classList.toggle('done');
+  const s=getState();
+  s[el.dataset.key]=el.classList.contains('done');
+  saveState(s);
+  updateProgress();
+}
+
+function updateProgress(){
+  const all=document.querySelectorAll('.check-item');
+  const done=document.querySelectorAll('.check-item.done');
+  const pct=all.length>0?Math.round(done.length/all.length*100):0;
+  document.getElementById('progress-text').textContent=done.length+' / '+all.length;
+  document.getElementById('progress-bar').style.width=pct+'%';
+}
+
+function resetAll(){
+  if(!confirm('チェックをすべてリセットしますか？\n（メモは残ります）'))return;
+  const s=getState();
+  document.querySelectorAll('.check-item').forEach(el=>{
+    el.classList.remove('done');
+    s[el.dataset.key]=false;
+  });
+  saveState(s);
+  updateProgress();
+}
+
+function restoreState(){
+  const s=getState();
+  document.querySelectorAll('.check-item').forEach(el=>{
+    if(s[el.dataset.key])el.classList.add('done');
+  });
+  document.querySelectorAll('.section').forEach(sec=>{
+    if(s['section_'+sec.id])sec.classList.add('collapsed');
+  });
+  document.querySelectorAll('.memo-textarea').forEach(el=>{
+    if(s[el.dataset.key])el.value=s[el.dataset.key];
+    el.addEventListener('input',()=>{const s=getState();s[el.dataset.key]=el.value;saveState(s);});
+    el.addEventListener('click',e=>e.stopPropagation());
+  });
+  updateProgress();
+}
+
+restoreState();
+</script>
+</body>
+</html>
